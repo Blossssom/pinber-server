@@ -3,14 +3,14 @@
 import { Transform, Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 
-export class GetBoardDto {
+export class GetImagesDto {
   @IsOptional()
   @IsString()
   source_url?: string = '/';
 
   @IsOptional()
   @IsString()
-  options?: string;
+  data?: string;
 
   @IsOptional()
   @Type(() => Number)

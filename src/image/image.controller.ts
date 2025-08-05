@@ -1,7 +1,55 @@
-import { Controller } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ImageService } from './image.service';
+import { ImageResponseDto } from './dto/image-response.dto';
+import { parseDataParameter } from 'src/utils/parse-parameter';
+import { GetImagesDto } from './dto/get-board.dto';
 
-@Controller('image')
+@Controller('image/HomefeedResource')
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
+
+  @Get('homefeed')
+  async getHomeFeed(
+    @Query(new ValidationPipe({ transform: true }))
+    query: GetImagesDto,
+  ): Promise<ImageResponseDto> {
+    try {
+      const parsedData = parseDataParameter<{ options: object }>(query.data);
+
+      const options = parsedData.options || {};
+      const currentBookmark = options.bookmarks?.[0];
+
+      const result = await this.imageService.getHomeFeedData({
+        bookmark: currentBookmark,
+        limit: options.limit || 20,
+        fieldSetKey: options.fieldSetKey || 'hf_grid',
+        staticFeed: options.staticFeed || false,
+      });
+
+      return {
+        resource: {
+          status: 'success',
+          code: 200,
+          data: result.data,
+          bookmark: result.bookmark,
+          http_status: result.httpStatus,
+        },
+      };
+    } catch (error: any) {
+      throw new BadRequestException({
+        resouce: {
+          status: 'error',
+          code: 400,
+          message: `Failed to fetch home feed data: ${error?.message}`,
+          http_status: 400,
+        },
+      });
+    }
+  }
 }
