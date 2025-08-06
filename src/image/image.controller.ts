@@ -9,6 +9,7 @@ import { ImageService } from './image.service';
 import { ImageResponseDto } from './dto/image-response.dto';
 import { parseDataParameter } from 'src/utils/parse-parameter';
 import { GetImagesDto } from './dto/get-board.dto';
+import { ParseDataoption } from './interface/service.interface';
 
 @Controller('image/HomefeedResource')
 export class ImageController {
@@ -20,7 +21,7 @@ export class ImageController {
     query: GetImagesDto,
   ): Promise<ImageResponseDto> {
     try {
-      const parsedData = parseDataParameter<{ options: object }>(query.data);
+      const parsedData = parseDataParameter<ParseDataoption>(query.data);
 
       const options = parsedData.options || {};
       const currentBookmark = options.bookmarks?.[0];
@@ -28,17 +29,15 @@ export class ImageController {
       const result = await this.imageService.getHomeFeedData({
         bookmark: currentBookmark,
         limit: options.limit || 20,
-        fieldSetKey: options.fieldSetKey || 'hf_grid',
         staticFeed: options.staticFeed || false,
       });
 
       return {
         resource: {
           status: 'success',
-          code: 200,
           data: result.data,
           bookmark: result.bookmark,
-          http_status: result.httpStatus,
+          http_status: 200,
         },
       };
     } catch (error: any) {
@@ -46,7 +45,7 @@ export class ImageController {
         resouce: {
           status: 'error',
           code: 400,
-          message: `Failed to fetch home feed data: ${error?.message}`,
+          message: `Failed to fetch home feed data: ${error}`,
           http_status: 400,
         },
       });

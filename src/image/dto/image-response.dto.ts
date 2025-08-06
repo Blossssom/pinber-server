@@ -4,7 +4,7 @@ export class ImageInfoDto {
   url: string;
 }
 
-export class EachSizeDto {
+export class ImageSize {
   '170x': ImageInfoDto;
   '236x': ImageInfoDto;
   '474x': ImageInfoDto;
@@ -15,19 +15,18 @@ export class EachSizeDto {
 
 export class AuthorDto {
   id: string;
-  type: string;
   node_id: string;
   username: string;
-  full_name: string;
+  display_name: string;
   image_small_url: string;
   image_medium_url: string;
 }
 
 export class ImageItemDto {
   id: string;
-  link?: string;
+  link?: string | null;
   node_id: string;
-  images: EachSizeDto;
+  images: ImageSize;
   description: string;
   title: string;
   created_at: string;
@@ -36,12 +35,13 @@ export class ImageItemDto {
   is_video: boolean;
 }
 
+export class ImageFeedDto {
+  status: string;
+  data: ImageItemDto[];
+  bookmark?: string;
+  http_status?: number;
+}
+
 export class ImageResponseDto {
-  resource: {
-    status: string;
-    code: number;
-    data: ImageItemDto[];
-    bookmark?: string;
-    http_status?: number;
-  };
+  resource: ImageFeedDto;
 }

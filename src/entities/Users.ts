@@ -34,6 +34,20 @@ export class Users {
   })
   displayName: string | null;
 
+  @Column('character varying', {
+    name: 'image_small_url',
+    nullable: true,
+    length: 255,
+  })
+  imageSmallUrl: string | null;
+
+  @Column('character varying', {
+    name: 'image_medium_url',
+    nullable: true,
+    length: 255,
+  })
+  imageMediumUrl: string | null;
+
   @Column('timestamp without time zone', {
     name: 'created_at',
     nullable: true,
