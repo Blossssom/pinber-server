@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import path from 'path';
 import { Images } from 'src/entities/Images';
 import { Users } from 'src/entities/Users';
+import { validateFile } from 'src/utils/validate-file';
 import { Repository } from 'typeorm';
 
 interface UploadMetadata {
@@ -29,5 +31,18 @@ export class ImageUploadService {
     private userRepository: Repository<Users>,
   ) {}
 
-  async uploadAndProcessImage(file: Express.Multer.File): Promise<Images> {}
+  async uploadAndProcessImage(
+    file: Express.Multer.File,
+    userId: string,
+    metadata?: UploadMetadata,
+  ): Promise<Images> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      validateFile(file);
+    } catch (err) {}
+  }
 }
